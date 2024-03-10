@@ -9,4 +9,5 @@ class User(AbstractUser):
     # last_name = models.CharField(_("last name"), max_length=150, blank=True)
     # email = models.EmailField(_("email address"), blank=True)
     # date_joined = models.DateTimeField(_("date joined"), default=timezone.now)
+    telegram_id = models.PositiveIntegerField(verbose_name='Telegram ID', blank=True, null=True)
     REQUIRED_FIELDS = []
