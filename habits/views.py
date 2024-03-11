@@ -1,5 +1,5 @@
 from django.db.models import Q
-from rest_framework.generics import CreateAPIView
+from rest_framework.generics import CreateAPIView, ListAPIView
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.viewsets import ModelViewSet
 
@@ -38,3 +38,11 @@ class HabitCRUDAPIView(ModelViewSet):
         else:
             serializer_class = HabitAPIViewSerializer
         return serializer_class
+
+
+class MyHabitListAPIView(ListAPIView):
+    serializer_class = HabitAPIViewSerializer
+
+    def get_queryset(self):
+        user = self.request.user
+        return Habit.objects.filter(owner=user)
