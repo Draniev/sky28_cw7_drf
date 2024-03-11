@@ -4,7 +4,7 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 from django.contrib.auth import get_user_model
 
-from habits.models import Habit
+from habits.models import Habit, Day
 
 User = get_user_model()
 
@@ -17,6 +17,15 @@ class CreateHabitTestCase(APITestCase):
         self.another_user = User.objects.create_user(
             username='another_user', password='password123'
         )
+        self.days_of_week = [
+            Day.objects.create(name='Monday'),
+            Day.objects.create(name='Tuesday'),
+            Day.objects.create(name='Wednesday'),
+            Day.objects.create(name='Thursday'),
+            Day.objects.create(name='Friday'),
+            Day.objects.create(name='Saturday'),
+            Day.objects.create(name='Sunday')
+        ]
         self.test_user_pleasant_habit = Habit.objects.create(
             owner=self.test_user,
             name='test user pleasant habit',
@@ -25,6 +34,8 @@ class CreateHabitTestCase(APITestCase):
             is_pleasant=True,
             is_public=True,
         )
+        self.test_user_pleasant_habit.schedule.set([day for day in self.days_of_week if day.id % 2])
+
         self.test_user_not_pleasant_habit = Habit.objects.create(
             owner=self.test_user,
             name='test user not pleasant habit',
@@ -50,6 +61,7 @@ class CreateHabitTestCase(APITestCase):
             'name': 'test habit',
             'place': 'test place',
             'time': '12:30:00',
+            'schedule': [day.id for day in self.days_of_week if day.id % 2]
         }
         response = self.client.post(
             '/api/habits/', data=test_data, format='json',
@@ -57,6 +69,7 @@ class CreateHabitTestCase(APITestCase):
         new_count = Habit.objects.count()
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(new_count, initial_count + 1)
+        self.assertEqual(len(response.data['schedule']), 4)
 
     def test_create_habit_with_reward(self):
         self.client.force_authenticate(user=self.test_user)
@@ -142,7 +155,15 @@ class HabitListUpdRetrDelTestCase(APITestCase):
         self.another_user = User.objects.create_user(
             username='another_user', password='password123'
         )
-
+        self.days_of_week = [
+            Day.objects.create(name='Monday'),
+            Day.objects.create(name='Tuesday'),
+            Day.objects.create(name='Wednesday'),
+            Day.objects.create(name='Thursday'),
+            Day.objects.create(name='Friday'),
+            Day.objects.create(name='Saturday'),
+            Day.objects.create(name='Sunday')
+        ]
         self.test_user_pleasant_habit = Habit.objects.create(
             owner=self.test_user,
             name='test user pleasant habit',
@@ -254,6 +275,7 @@ class HabitListUpdRetrDelTestCase(APITestCase):
         test_data = {
             'name': 'test habit',
             'place': 'test place',
+            'schedule': [day.id for day in self.days_of_week if day.id % 2]
         }
 
         response = self.client.patch(
@@ -262,6 +284,7 @@ class HabitListUpdRetrDelTestCase(APITestCase):
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['name'], 'test habit')
+        self.assertEqual(len(response.data['schedule']), 4)
 
         response = self.client.patch(
             f'/api/habits/{self.another_user_public_habit1.id}/',
@@ -295,7 +318,7 @@ class HabitListUpdRetrDelTestCase(APITestCase):
             'reward': 'to pet a cat',
             'linked_habit': None,
             'execution_seconds': 30,
-            'periodicity': 'hourly',
+            'schedule': [day.id for day in self.days_of_week if day.id % 2],
         }
 
         response = self.client.put(
@@ -304,6 +327,7 @@ class HabitListUpdRetrDelTestCase(APITestCase):
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['reward'], 'to pet a cat')
+        self.assertEqual(len(response.data['schedule']), 4)
 
     def test_delete_habit(self):
         self.client.force_authenticate(user=self.test_user)

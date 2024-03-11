@@ -2,7 +2,7 @@ from rest_framework import serializers
 from rest_framework.fields import SerializerMethodField
 from rest_framework.relations import SlugRelatedField
 
-from habits.models import Habit
+from habits.models import Habit, Day
 from habits.validators import LinkedHabitAndRewardValidator, IsPleasantHabitRewardValidator, IsLinkedToPleasantHabitValidator, \
     IsLinkedToOwnerHabitValidator
 
@@ -11,6 +11,7 @@ class HabitCreateAPISerializer(serializers.ModelSerializer):
     owner = serializers.HiddenField(
         default=serializers.CurrentUserDefault()
     )
+    schedule = serializers.PrimaryKeyRelatedField(queryset=Day.objects.all(), many=True, required=False)
 
     class Meta:
         model = Habit
@@ -21,6 +22,16 @@ class HabitCreateAPISerializer(serializers.ModelSerializer):
                       IsLinkedToPleasantHabitValidator(),
                       IsLinkedToOwnerHabitValidator(),
                       ]
+
+        def create(self, validated_data):
+            schedule_days = validated_data.pop('schedule', None)
+            habit = Habit.objects.create(**validated_data)
+            if schedule_days:
+                habit.schedule.set(schedule_days)
+            else:
+                all_days = Day.objects.all()
+                habit.schedule.set(all_days)
+            return habit
 
 
 class HabitAPIViewSerializer(serializers.ModelSerializer):
