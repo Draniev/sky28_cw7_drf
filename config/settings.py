@@ -12,7 +12,9 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 from datetime import timedelta
 from pathlib import Path
 
-from config.config import SECRET, DB_NAME, DB_USER, DB_PASSWORD, DB_HOST, DB_PORT
+from celery.schedules import crontab
+
+from config.config import SECRET, DB_NAME, DB_USER, DB_PASSWORD, DB_HOST, DB_PORT, REDIS_HOST
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -40,10 +42,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    'django_celery_beat',
     'corsheaders',
     'rest_framework',
     'rest_framework_simplejwt',
-    'django_celery_beat',
 
     'users',
     'habits',
@@ -172,14 +174,14 @@ CSRF_TRUSTED_ORIGINS = [
 
 CORS_ALLOW_ALL_ORIGINS = False
 
-CELERY_BROKER_URL = 'redis://localhost:6379'
-CELERY_RESULT_BACKEND = 'redis://localhost:6379'
+CELERY_BROKER_URL = f'redis://{REDIS_HOST}:6379/0'
+CELERY_RESULT_BACKEND = f'redis://{REDIS_HOST}:6379/0'
 CELERY_TASK_TRACK_STARTED = True
 CELERY_TASK_TIME_LIMIT = 30 * 60
 
-# CELERY_BEAT_SCHEDULE = {
-#     'check_user_last_visit': {
-#         'task': 'check_user',
-#         'schedule': crontab(minute=0, hour=12),
-#     },
-# }
+CELERY_BEAT_SCHEDULE = {
+    'check_and_send_notifications': {
+        'task': 'send_notifications',
+        'schedule': crontab(minute='*', hour='*/1'),
+    },
+}
