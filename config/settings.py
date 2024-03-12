@@ -42,10 +42,11 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    'django_celery_beat',
     'corsheaders',
     'rest_framework',
     'rest_framework_simplejwt',
+    'django_celery_beat',
+    # 'drf_yasg',
 
     'users',
     'habits',
