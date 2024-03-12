@@ -46,7 +46,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
     'django_celery_beat',
-    # 'drf_yasg',
+    'drf_yasg',
 
     'users',
     'habits',
@@ -185,4 +185,16 @@ CELERY_BEAT_SCHEDULE = {
         'task': 'habits.tasks.send_notifications',
         'schedule': crontab(minute='*', hour='*/1'),
     },
+}
+
+SWAGGER_SETTINGS = {
+    'SECURITY_DEFINITIONS': {
+        'basic': {
+            'type': 'basic'
+        }
+    },
+}
+
+REDOC_SETTINGS = {
+   'LAZY_RENDERING': False,
 }

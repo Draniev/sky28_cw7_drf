@@ -17,25 +17,30 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework import permissions
-# from drf_yasg.views import get_schema_view
-# from drf_yasg import openapi
+from drf_yasg.views import get_schema_view
+from drf_yasg import openapi
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
 )
 
-# schema_view = get_schema_view(
-#     openapi.Info(
-#         title="API Documentation",
-#         default_version='v1',
-#         description="Your API description",
-#         terms_of_service="https://www.example.com/policies/terms/",
-#         contact=openapi.Contact(email="contact@example.com"),
-#         license=openapi.License(name="BSD License"),
-#     ),
-#     public=True,
-#     permission_classes=(permissions.AllowAny,),
-# )
+schema_view = get_schema_view(
+    openapi.Info(
+        title="Трекер привычек 'Habits'",
+        default_version='v1',
+        description=(
+            "Habits - это веб-приложение для отслеживания и формирования "
+            "полезных привычек. Вдохновленный книгой \"Атомные привычки\""
+            " Джеймса Клира, Habits помогает пользователям создавать, "
+            "отслеживать и внедрять новые привычки, а также избавляться "
+            "от старых негативных привычек."),
+        terms_of_service="https://www.example.com/policies/terms/",
+        contact=openapi.Contact(email="sergei@mail.com"),
+        license=openapi.License(name="BSD License"),
+    ),
+    public=True,
+    permission_classes=(permissions.AllowAny,),
+)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -44,6 +49,6 @@ urlpatterns = [
     path('api/', include('bot.urls')),
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-    # path('docs/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
-    # path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
+    path('docs/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+    path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
 ]
