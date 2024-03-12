@@ -164,16 +164,16 @@ SIMPLE_JWT = {
 
 CORS_ALLOWED_ORIGINS = [
     # Замените на адрес вашего фронтенд-сервера
-    'http://localhost:8000',
+    'http://127.0.0.1:8000',
 ]
 
 CSRF_TRUSTED_ORIGINS = [
     # Замените на адрес вашего фронтенд-сервера
     # и добавьте адрес бэкенд-сервера
-    "http://localhost:8000",
+    "http://127.0.0.1:8000",
 ]
 
-CORS_ALLOW_ALL_ORIGINS = False
+CORS_ALLOW_ALL_ORIGINS = True
 
 CELERY_BROKER_URL = f'redis://{REDIS_HOST}:6379/0'
 CELERY_RESULT_BACKEND = f'redis://{REDIS_HOST}:6379/0'
@@ -182,7 +182,7 @@ CELERY_TASK_TIME_LIMIT = 30 * 60
 
 CELERY_BEAT_SCHEDULE = {
     'check_and_send_notifications': {
-        'task': 'send_notifications',
+        'task': 'habits.tasks.send_notifications',
         'schedule': crontab(minute='*', hour='*/1'),
     },
 }

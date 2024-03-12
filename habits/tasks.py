@@ -1,5 +1,7 @@
 from datetime import datetime, timedelta
 
+from celery import shared_task
+
 from bot.models import TgUser
 from config import celery_app
 from config.config import tg_client
@@ -16,14 +18,14 @@ def get_habits_to_notify():
     return habits_to_notify
 
 
-@celery_app.task()
+@celery_app.task
 def send_notifications():
-    # print('Начали задачу по оповещению')
+    # tg_client.send_message(..., 'Начали задачу по оповещению')
     habits_to_notify = get_habits_to_notify()
-    # print(f'Всего требует оповещения: {len(habits_to_notify)}')
+    # tg_client.send_message(..., f'Всего требует оповещения: {len(habits_to_notify)}')
 
     for habit in habits_to_notify:
-        # print(f'Задача {habit.name} от пользователя {habit.user.name}')
+        # tg_client.send_message(..., f'Задача {habit.name} от пользователя {habit.owner.username}')
         tg_users = TgUser.objects.filter(user=habit.owner)
 
         for tg_user in tg_users:
