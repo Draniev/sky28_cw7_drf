@@ -4,11 +4,12 @@ from dotenv import load_dotenv
 
 from bot.tg.client import TgClient
 
-is_dotenv_load = load_dotenv()
-if not is_dotenv_load:
-    raise FileNotFoundError('Не удалось загрузить переменные окружения!')
-else:
-    print('Переменные окружения ЗАГРУЖЕНЫ')
+if os.getenv('INTO_DOCKER'):
+    is_dotenv_load = load_dotenv()
+    if not is_dotenv_load:
+        raise FileNotFoundError('Не удалось загрузить переменные окружения!')
+    else:
+        print('Переменные окружения УСТАНОВЛЕНЫ')
 
 SECRET = os.getenv('SECRET')
 DB_NAME = os.getenv('DB_NAME')
