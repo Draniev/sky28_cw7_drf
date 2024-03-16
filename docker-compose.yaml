@@ -25,7 +25,10 @@ services:
   migrations:
     build:
       context: .
-    command: ./manage.py migrate
+#    command: ./manage.py migrate
+    command: >
+      sh -c "./manage.py migrate && ./manage.py loaddata weekdays.json"
+
     env_file:
       - .env.docker
     depends_on:
