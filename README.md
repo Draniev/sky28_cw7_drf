@@ -46,8 +46,8 @@ Habits - это веб-приложение для отслеживания и �
 - ... (всякие мелочи)
 
 
-## Для запуска
-Настроить файл с переменными среды .env, пример:
+## Для запуска локально
+Добавить файл с переменными среды .env, пример:
 ```editorconfig
 SECRET=django-insecure-i-u2...
 DB_NAME=postgres
@@ -56,11 +56,12 @@ DB_PASSWORD=postgres
 DB_HOST=127.0.0.1
 DB_PORT=5432
 TELEGRAM_API=5280...
+REDIS_HOST=127.0.0.1
 ```
 
 Собрать и запустить контейнеры с базами данных:
 ```commandline
-docker-compose up
+docker compose up
 ```
 После инициализации базы данных установить фикстуры с днями недели командой 
 ```commandline
@@ -77,4 +78,28 @@ celery -A config worker --loglevel=info
 Запуск брокера Celery
 ```commandline
 celery -A config beat --loglevel=info
+```
+
+## Для запуска в контейнере
+Добавить файл с переменными среды .env.docker, пример:
+```commandline
+INTO_DOCKER=TRUE
+SECRET=django-insecure-i-u29...
+DB_NAME=postgres
+DB_USER=postgres
+DB_PASSWORD=postgres
+DB_HOST=db
+DB_PORT=5432
+TELEGRAM_API=52803...
+REDIS_HOST=redis
+```
+Добавить файл с настройками Postgres:
+```commandline
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=postgres
+POSTGRES_DB=postgres
+```
+Собрать и запустить контейнеры с базами данных:
+```commandline
+docker compose up
 ```
